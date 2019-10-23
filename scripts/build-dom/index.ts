@@ -15,9 +15,9 @@ for (const c of components) {
   const dir = readdirSync(componentsDir + tag + '/test');
 
   let render = `
-        export default {
-          title: '${c.tag}',
-        };
+import { storiesOf } from '@storybook/html';
+import { withActions } from '@storybook/addon-actions';
+storiesOf('${c.tag}', module)
         `;
 
   for (const t of dir) {
@@ -34,43 +34,35 @@ for (const c of components) {
         continue;
       }
     }
-    const testsHtmlString = testsHtml[0];
+    let testsHtmlString = testsHtml[0];
 
     // scriptがあった時の処理
-    const script = testsHtmlString.match(/<script>[\s\S]*?<\/script>/i);
-    let scriptTag;
-    if (script && tag == 'action-sheet') {
-      scriptTag = script[0].replace('<script>', '').replace('</script>', '');
+    const script = tests.match(/<script>[\s\S]*?<\/script>/i);
+    let scriptTag = '';
+    if (script && !['back-button'].includes(tag)) {
+      const scriptCode = script[0]
+        .replace('<script>', '')
+        .replace('</script>', '')
+        .replace(/\${/g, '\\${');
+      testsHtmlString = testsHtmlString.replace(/<script>[\s\S]*?<\/script>/i, '');
+      scriptTag = `
+      (function () {
+        console.log('load scripts');
+        const script = document.createElement('script');
+        script.innerHTML = \`${scriptCode.replace(/`/g, '\\`')}\`;
+        document.getElementById('root').appendChild(script);
+      }());
+      `
     } else {
       scriptTag = '';
     }
 
     const testType = t.replace('-', '_');
-    render = render + `
-        export const ${testType} = () => \`${testsHtmlString.replace(/`/g, '\\`')}\`;
-        `;
-    render = render + scriptTag;
+    render = render + `.add('${testType}', () => {
+      ${scriptTag}
+      return \`${testsHtmlString.replace(/`/g, '\\`')}\`
+     })`;
   }
 
-  writeFileSync('stories/' + tag + '.stories.js', render, { encoding: 'UTF8' });
-
-
-  //
-  //
-  // let usage = JSON.stringify(c.usage.javascript)
-  //   .replace('```html', '')
-  //   .replace('```', '');
-  //
-  // if (!usage.match(/ion-app/)) {
-  //   usage = '"<ion-app>' + usage.slice( 1 ).slice( 0, -1 ) + '</ion-app>"'
-  // }
-  //
-  // const render = `
-  //   export default {
-  //     title: '${c.tag}',
-  //   };
-  //   export const components = () => ${usage};
-  //   `;
-  //
-  // writeFileSync('stories/' + c.tag + '.stories.js', render, { encoding: 'UTF8' });
+  writeFileSync('stories/' + tag + '.stories.ts', render, { encoding: 'UTF8' });
 }

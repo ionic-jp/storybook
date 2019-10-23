@@ -4,9 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run lint && npm run build-lib && build-storybook",
+    "build-lib-watch": "tsc -w",
+    "build-lib": "tsc && npm run copy-css-to-lib && npm run copy-svg-to-lib && npm run copy-png-to-lib && npm run copy-woff2-to-lib",
+    "test": "react-scripts-ts test --env=jsdom",
+    "test:coverage": "npm test -- --coverage",
+    "eject": "react-scripts-ts eject",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
+    "copy-css-to-lib": "cpx \"./src/**/*.css\" ./build/lib",
+    "copy-woff2-to-lib": "cpx \"./src/**/*.woff2\" ./build/lib",
+    "copy-svg-to-lib": "cpx \"./src/**/*.svg\" ./build/lib",
+    "copy-png-to-lib": "cpx \"./src/**/*.png\" ./build/lib",
+    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
     "build-core": "rm -rf stories && ts-node -P scripts/tsconfig.json  scripts/build-dom/index.ts"
   },
   "keywords": [],
@@ -24,6 +34,9 @@
     "ts-node": "^8.4.1",
     "tslint": "^5.20.0",
     "tslint-ionic-rules": "0.0.21",
-    "typescript": "^3.6.4"
+    "typescript": "^3.6.4",
+    "@storybook/addon-actions": "^5.2.5",
+    "@storybook/addon-info": "^5.2.5",
+    "awesome-typescript-loader": "^5.2.1"
   }
 }
