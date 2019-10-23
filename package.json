@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
+    "start": "start-storybook -p 6006",
+    "build": "build-storybook && cp -r -f scripts/ionic/core/src storybook-static/src",
     "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
     "build-core": "rm -rf stories && ts-node -P scripts/tsconfig.json  scripts/build-dom/index.ts",
+    "prod": "cd scripts && git clone git@github.com:ionic-team/ionic.git && cd .. && npm run buld-core && npm run build"
   },
   "keywords": [],
   "author": "",
