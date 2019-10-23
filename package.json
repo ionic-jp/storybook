@@ -8,7 +8,7 @@
     "build": "build-storybook && cp -r -f scripts/ionic/core/src storybook-static/src",
     "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
     "build-core": "rm -rf stories && ts-node -P scripts/tsconfig.json  scripts/build-dom/index.ts",
-    "prod": "npm run prod:before && npm run npm run build-core && npm run build && npm run prod:after",
+    "prod": "npm run prod:before && npm run build-core && npm run build && npm run prod:after",
     "prod:before": "cd scripts && git clone https://github.com/ionic-team/ionic.git && cd .. ",
     "prod:after": "mv -f assets/favicon.ico storybook-static/favicon.ico && cd scripts && rm -rf ionic"
   },
