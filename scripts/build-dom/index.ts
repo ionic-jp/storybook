@@ -17,7 +17,7 @@ for (const c of components) {
   let render = `
 import { storiesOf } from '@storybook/html';
 import { withActions } from '@storybook/addon-actions';
-storiesOf('${c.tag}', module)
+storiesOf('${tag}', module)
         `;
 
   for (const t of dir) {
