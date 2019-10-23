@@ -34,14 +34,25 @@ for (const c of components) {
         continue;
       }
     }
+    const testsHtmlString = testsHtml[0];
+
+    // scriptがあった時の処理
+    const script = testsHtmlString.match(/<script>[\s\S]*?<\/script>/i);
+    let scriptTag;
+    if (script && tag == 'action-sheet') {
+      scriptTag = script[0].replace('<script>', '').replace('</script>', '');
+    } else {
+      scriptTag = '';
+    }
 
     const testType = t.replace('-', '_');
     render = render + `
-        export const ${testType} = () => \`${testsHtml[0].replace(/`/g, '\\`')}\`;
+        export const ${testType} = () => \`${testsHtmlString.replace(/`/g, '\\`')}\`;
         `;
+    render = render + scriptTag;
   }
 
-  writeFileSync('stories/' + c.tag + '.stories.js', render, { encoding: 'UTF8' });
+  writeFileSync('stories/' + tag + '.stories.js', render, { encoding: 'UTF8' });
 
 
   //
